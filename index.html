@@ -51,7 +51,7 @@ const CFG={
   owner:"sadd11",           // имя пользователя на GitHub
   repo:"zvonok-app",              // название репозитория с релизами
   apkName:"",                          // необязательно: точное имя файла, например "app-release.apk" (запасная ссылка, если GitHub API недоступен)
-  token:"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"                             // ТОЛЬКО для приватного репозитория: токен GitHub (см. предупреждение в ответе). Для публичного оставь пустым
+  token:""                             // ТОЛЬКО для приватного репозитория: токен GitHub (см. предупреждение в ответе). Для публичного оставь пустым
 };
 /* ======================================== */
 const $=id=>document.getElementById(id);
@@ -96,7 +96,7 @@ fetch(`https://api.github.com/repos/${CFG.owner}/${CFG.repo}/releases/latest`,{h
   $("meta").textContent=`Версия ${j.tag_name||j.name} · ${mb(a.size)} · ${d}`;
   if(j.body&&j.body.trim()){$("notes").textContent=j.body.trim();$("notesCard").hidden=false}
 })
-.catch(()=>fail("Не удалось получить данные о версии"));
+.catch(e=>fail(e===401?"Токен недействителен или истёк (ошибка 401)":e===403?"Доступ запрещён или превышен лимит запросов (ошибка 403)":e===404?"Релиз не найден (ошибка 404): нет опубликованного релиза, неверное имя репозитория или у токена нет доступа":"Не удалось получить данные о версии"+(typeof e==="number"?" (ошибка "+e+")":"")));
 </script>
 </body>
 </html>
